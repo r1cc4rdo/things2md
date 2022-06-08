@@ -96,7 +96,7 @@ def create_areas(areas, projects, todos):
             fout.write('\n')
             contents = [todo for todo in todos.values() if todo['path'].parent == area['path']]
             for todo in sorted(contents, key=lambda t: t['today_index']):
-                fout.write(f'* [{todo["title"]}]({todo["path"]})\n')
+                fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
 
 
 def create_projects(headings, projects, todos):
@@ -121,12 +121,14 @@ def create_projects(headings, projects, todos):
 
             for content in contents:
                 if content['type'] == 'to-do':
-                    fout.write(f'\n* [{content["title"]}]({content["path"]})')
+                    fout.write(f'\n- [ ] [{content["title"]}]({content["path"]})')
+                    fout.write(f'\n\t- ![Open ToDo...]({content["path"]})')
                 else:  # it's a heading
                     fout.write(f'\n\n## {content["title"]}')
                     heading_contents = [todo for todo in todos.values() if 'heading' in todo and todo['heading'] == content['uuid']]
                     for todo in sorted(heading_contents, key=lambda t: t['index']):
-                        fout.write(f'\n* [{todo["title"]}]({todo["path"]})')
+                        fout.write(f'\n- [ ] [{todo["title"]}]({todo["path"]})')
+                        fout.write(f'\n\t- ![Open ToDo...]({todo["path"]})')
 
 
 def create_inbox(todos):
@@ -134,7 +136,8 @@ def create_inbox(todos):
     with Path('inbox.md').open('w') as fout:
         contents = [todo for todo in todos.values() if todo['path'].parent == Path('inbox')]
         for todo in sorted(contents, key=lambda t: t['index']):
-            fout.write(f'* [{todo["title"]}]({todo["path"]})\n')
+            fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
+            fout.write(f'\t- ![Open ToDo...]({todo["path"]})\n')
 
 
 def create_upcoming(things_db, todos):
@@ -155,7 +158,7 @@ def create_upcoming(things_db, todos):
                 prev_date[2] = None
             elif prev_date[2] and prev_date[2] != todo_date[2]:  # day changed
                 fout.write(f'\n# {todo_date[2]} {todo_dt.strftime("%B")}\n')
-            fout.write(f'* [{todo["title"]}]({todo["path"]})\n')
+            fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
             prev_date = [(p and t) for p, t in zip(prev_date, todo_date)]
 
 
@@ -172,7 +175,7 @@ def create_today(areas, projects, things_db, todos):
             if area_todos:
                 fout.write(f'\n# {areas[area]["title"]}\n')
                 for todo in area_todos:
-                    fout.write(f'* [{todo["title"]}]({todo["path"]})\n')
+                    fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
 
             for project in today_projects:
                 if project['area'] != area:
@@ -180,7 +183,7 @@ def create_today(areas, projects, things_db, todos):
 
                 fout.write(f'\n# {project["title"]}\n')
                 for todo in [t for t in today_todos if t['path'].parent == project['path']]:
-                    fout.write(f'* [{todo["title"]}]({todo["path"]})\n')
+                    fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
 
 
 def convert(db_path=None):
@@ -203,9 +206,15 @@ def convert(db_path=None):
 
 if __name__ == '__main__':
 
-    # import os
-    # os.system('rm *.md')
-    # os.system('rm -rf inbox learning personal time travel work')
+    import os
+    os.system('rm *.md')
+    os.system('rm -rf inbox learning personal time travel work')
 
     convert()
     print('All done.')
+
+    # TODO: unmangled filenames
+    # TODO: save obsiadian settings to repo (outliner, things theme)
+    # TODO: normalize todos, add safe name, convert date, find all fields
+    # TODO: ignore today upcoming etc, make your own from dates
+    # TODO: add hierarchy for Breadcrumbs plugin: https://github.com/SkepticMystic/breadcrumbs
