@@ -1,29 +1,32 @@
 import json
 from pathlib import Path
 from datetime import datetime
-import unicodedata
-import re
 
 
-def sanitize_path(value, allow_unicode=False, max_length=232):
+def sanitize_name(text):
     """
-    Modified from stackoverflow.com/questions/295135/turn-a-string-into-a-valid-filename
-    originally from Django's  github.com/django/django/blob/master/django/utils/text.py
-    max_lenght is set to 232 because a things uuid is 22 characters long, plus a separator
+    The only two invalid characters in a MacOS path name are '\0' and ':'.
+    We ignore the first and substitute the second with a unicode lookalike, U+A789 (i.e '꞉').
+    See https://charbase.com/a789-unicode-modifier-letter-colon, U+A789: MODIFIER LETTER COLON.
+
+    Technically forward slashes '/' can appear in a filename in MacOS, but they are borderline
+    impossible to escape in Python while constructing a path, so we substitute them with U+2215 '/'.
     """
-    value = str(value)
-    if allow_unicode:
-        value = unicodedata.normalize('NFKC', value)
-    else:
-        value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
-    value = re.sub(r'[^\w\s-]', '', value.lower())
-    value = re.sub(r'[-\s]+', '-', value).strip('-_')
-    return value[:max_length]
+    return str(text).replace(':', '\uA789').replace('/', '\u2215')[:255]
+
+
+def undupe(name, suffix):
+    """
+    Max path length on MacOS (Monterey, APFS) is 255 characters.
+    """
+    name = sanitize_name(name)
+    name = name[:255 - len(suffix) - 1]
+    return f'{name}-{suffix}'
 
 
 def load_db(db_path=None):
     """
-    Create with: things-cli -j all > things.json
+    Create with: things-cli -j all --recursive > things.json
     """
     with Path(db_path or 'things.json').open() as json_in:
         return{x['title']: x['items'] for x in json.load(json_in)}
@@ -45,16 +48,16 @@ def create_directories(areas, headings, projects):
     Path('inbox').mkdir(parents=False, exist_ok=False)
 
     for area in areas.values():  # create area directories
-        area['path'] = Path(sanitize_path(area['title']))
+        area['path'] = Path(sanitize_name(area['title']))
         if area['path'].exists():  # resolve name clashes with UUID
-            area['path'] = Path(sanitize_path(f'{area["title"]}-{area["uuid"]}'))
+            area['path'] = Path(undupe(area["title"], area["uuid"]))
         area['path'].mkdir(parents=False, exist_ok=False)
 
     for project in projects.values():  # create project directories
         area_path = areas[project['area']]['path']
-        project['path'] = area_path / sanitize_path(project['title'])
+        project['path'] = area_path / sanitize_name(project['title'])
         if project['path'].exists():  # resolve name clashes with UUID
-            project['path'] = area_path / sanitize_path(f'{project["title"]}-{project["uuid"]}')
+            project['path'] = area_path / undupe(project["title"], project["uuid"])
         project['path'].mkdir(parents=False, exist_ok=False)
 
     for heading in headings.values():  # collect headings' paths
@@ -72,7 +75,7 @@ def create_todos(areas, headings, projects, todos):
         else:
             parent = {'path': Path('inbox')}
 
-        todo['path'] = parent['path'] / f'{sanitize_path(todo["title"])}.md'
+        todo['path'] = parent['path'] / f'{sanitize_name(todo["title"])}.md'
         if todo['path'].exists():  # resolve name clashes with UUID
             todo['path'] = todo['path'].with_suffix(f'.{todo["uuid"]}.md')
 
@@ -207,14 +210,29 @@ def convert(db_path=None):
 if __name__ == '__main__':
 
     import os
-    os.system('rm *.md')
+    os.system('rm inbox.md learning.md personal.md time.md travel.md work.md today.md upcoming.md')
     os.system('rm -rf inbox learning personal time travel work')
 
     convert()
     print('All done.')
 
-    # TODO: unmangled filenames
-    # TODO: save obsiadian settings to repo (outliner, things theme)
+    # TODO: save obsiadian settings to repo (creases, breadcrumbs, things theme)
     # TODO: normalize todos, add safe name, convert date, find all fields
     # TODO: ignore today upcoming etc, make your own from dates
     # TODO: add hierarchy for Breadcrumbs plugin: https://github.com/SkepticMystic/breadcrumbs
+
+    # test creases https://github.com/liamcain/obsidian-creases
+    # add obsidian breadcrumb
+    # things theme
+
+    # argparse
+    # destination directory
+    # input db
+    # use creases
+    # use breadcrumbs
+    # don't generate inbox, upcoming, etc
+
+    # Where are the collapsed/folded states of lists and headings stored? - Developers & API - Obsidian Forum
+    # https://forum.obsidian.md/t/where-are-the-collapsed-folded-states-of-lists-and-headings-stored/38614
+
+    # obsidian things: colineckert10@gmail.com
