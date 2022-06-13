@@ -22,6 +22,7 @@ but  otherwise free and freedom-respecting markdown editor/manager. This tool is
 * [Things](https://culturedcode.com/things/): award-winning personal task manager, from [Cultured Code](https://culturedcode.com/).
 * [Backup](https://culturedcode.com/things/support/articles/2803570/) / [export](https://culturedcode.com/things/support/articles/2982272/) / [restore](https://culturedcode.com/things/support/articles/2803595/) your Things database.
 * [things-cli](https://github.com/thingsapi/things-cli): Python 3 CLI to read Things app data.
+* [things3-export](https://github.com/bboc/things3-export): export your Things 3 database to TaskPaper.
 
 ### Links for Obsidian
 * [Obsidian](https://obsidian.md/): markdown-based knowledge-base manager.
