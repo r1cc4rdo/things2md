@@ -6,9 +6,9 @@ initial db snapshot.
 
 For displaying results I recommend [Obsidian](https://obsidian.md/), an unfortunately closed-source
 but  otherwise free and freedom-respecting markdown editor/manager. This tool is designed to use the following skin/plugins:
-* [Things skin](https://github.com/colineckert/obsidian-things), by [Colin Eckert](https://github.com/colineckert),
-* [Breadcrumbs plugin](https://github.com/SkepticMystic/breadcrumbs): to provide navigation between lists,
-* [Creases plugin](https://github.com/liamcain/obsidian-creases): to programmatically fold lists. See also [this unanswered post](https://forum.obsidian.md/t/where-are-the-collapsed-folded-states-of-lists-and-headings-stored/38614).
+* [Things skin](https://github.com/colineckert/obsidian-things) by [Colin Eckert](https://github.com/colineckert),
+* [Breadcrumbs plugin](https://github.com/SkepticMystic/breadcrumbs) by [SkepticMystic](https://github.com/SkepticMystic): to provide navigation between lists,
+* [Creases plugin](https://github.com/liamcain/obsidian-creases) by [Liam Cain](https://github.com/liamcain): to programmatically fold lists. See also [this unanswered post](https://forum.obsidian.md/t/where-are-the-collapsed-folded-states-of-lists-and-headings-stored/38614).
 
 ### Known issues
 * Most templates currently only have inactive code inside. Send a pull request! 😊
