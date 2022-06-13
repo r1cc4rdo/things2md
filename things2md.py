@@ -1,7 +1,6 @@
 import json
 import argparse
 from pathlib import Path
-from datetime import datetime
 from collections import defaultdict, Counter
 
 from bottle import template
@@ -101,6 +100,11 @@ def load_db(db_path, all_todos=False):
 
 
 def convert(input_json, output_dir, all_todos=False):
+    """
+    Most logic for creating .md files is contained in the templates under the directory with the same name.
+    Templates are instances of the SimpleTemplate format, from the Bottle project. Syntax and docs can be
+    found here: https://bottlepy.org/docs/dev/stpl.html#bottle.SimpleTemplate
+    """
     uuids, lists = load_db(input_json, all_todos)
 
     for task in uuids.values():  # create directories
@@ -141,6 +145,9 @@ if __name__ == '__main__':
     # TODO: ignore today upcoming etc, make your own from dates
     # TODO: add hierarchy for Breadcrumbs plugin: https://github.com/SkepticMystic/breadcrumbs
     # TODO: test / use creases https://github.com/liamcain/obsidian-creases
+
+    # TODO: contact things-cli
+    # TODO: contact things skin
 
     # TODO check on my own db
     # for index, a in enumerate(lists):
