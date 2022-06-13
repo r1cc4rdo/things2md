@@ -1,1 +1,2 @@
-things-cli
+things-cli  # to dump db
+bottle  # for SimpleTemplate
