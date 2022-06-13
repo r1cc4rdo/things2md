@@ -1,7 +1,7 @@
 ---
-% for key, value in task.items():
-%   if key in 'uuid title area_title start_date created modified'.split():
-{{key}}: {{value}}
-%   end
+% for key in 'uuid title area_title project_title start_date stop_date created modified deadline'.split():
+% if key in task:
+{{key}}: {{task[key]}}
+% end
 % end
 ---

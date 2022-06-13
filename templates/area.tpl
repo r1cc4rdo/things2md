@@ -1,11 +1,24 @@
-def create_areas(areas, projects, todos):
-    for uuid, area in areas.items():
-        with Path(f'{area["path"].name}.md').open('w') as fout:
-            contents = [project for project in projects.values() if project['area'] == uuid]
-            for project in sorted(contents, key=lambda t: t['index']):
-                fout.write(f'* [{project["title"]}]({project["path"]})\n')
+# TODO
+* projects: sorted(contents, key=lambda t: t['index']):
+* todos: sorted(contents, key=lambda t: t['today_index']):
 
-            fout.write('\n')
-            contents = [todo for todo in todos.values() if todo['path'].parent == area['path']]
-            for todo in sorted(contents, key=lambda t: t['today_index']):
-                fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
+% area = uuids[uuid]
+% include('templates/frontmatter.tpl', task=area)
+## {{area['title']}}
+% area_projects = [p['uuid'] for p in area['items'] if p['type'] == 'project']
+% if area_projects:
+
+% for uuid in area_projects:
+% project = uuids[uuid]
+* [{project['title']}]({project['fullpath']})
+% end
+% end
+% area_todos = [t['uuid'] for t in area['items'] if t['type'] == 'to-do']
+% if area_todos:
+
+% for uuid in area_todos:
+% todo = uuids[uuid]
+- [{{' ' if todo['status'] == 'incomplete' else 'x'}}] {{todo['title']}}
+    - ![Open ToDo...]({{todo['fullpath']}})
+% end
+% end

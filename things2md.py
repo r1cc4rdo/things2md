@@ -100,52 +100,6 @@ def load_db(db_path, all_todos=False):
     return uuids, lists
 
 
-def create_upcoming(things_db, todos):
-    Path('upcoming.md').touch(exist_ok=False)  # create inbox markdown
-    with Path('upcoming.md').open('w') as fout:
-        prev_date = datetime.now()
-        prev_date = [prev_date.year, prev_date.month, prev_date.day]
-        for todo in sorted(things_db['Upcoming'], key=lambda x: x['today_index']):
-            todo = [t for t in todos.values() if t['uuid'] == todo['uuid']][0]  # cannot trust items in things_db to have 'path' because it contains duplicates
-
-            todo_dt = datetime.strptime(todo['start_date'], '%Y-%m-%d')
-            todo_date = [todo_dt.year, todo_dt.month, todo_dt.day]
-            if prev_date[0] != todo_date[0]:  # year changed
-                fout.write(f'\n# {todo_date[0]}\n')
-                prev_date[1:] = None, None
-            elif prev_date[1] and prev_date[1] != todo_date[1]:  # month changed
-                fout.write(f'\n# {todo_dt.strftime("%B")}\n')
-                prev_date[2] = None
-            elif prev_date[2] and prev_date[2] != todo_date[2]:  # day changed
-                fout.write(f'\n# {todo_date[2]} {todo_dt.strftime("%B")}\n')
-            fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
-            prev_date = [(p and t) for p, t in zip(prev_date, todo_date)]
-
-
-def create_today(areas, projects, things_db, todos):
-    Path('today.md').touch(exist_ok=False)  # create today markdown
-    with Path('today.md').open('w') as fout:
-        today_uuids = [todo['uuid'] for todo in things_db['Today']]
-        today_todos = [todo for todo in todos.values() if todo['uuid'] in today_uuids]
-        projects_paths = [todo['path'].parent for todo in today_todos]
-        today_projects = [project for project in sorted(projects.values(), key=lambda x: x['index']) if project['path'] in projects_paths]
-        for area in areas:
-
-            area_todos = [t for t in today_todos if 'area' in t and t['area'] == area]
-            if area_todos:
-                fout.write(f'\n# {areas[area]["title"]}\n')
-                for todo in area_todos:
-                    fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
-
-            for project in today_projects:
-                if project['area'] != area:
-                    continue
-
-                fout.write(f'\n# {project["title"]}\n')
-                for todo in [t for t in today_todos if t['path'].parent == project['path']]:
-                    fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
-
-
 def convert(input_json, output_dir, all_todos=False):
     uuids, lists = load_db(input_json, all_todos)
 
@@ -158,12 +112,13 @@ def convert(input_json, output_dir, all_todos=False):
             with (output_dir / item['fullpath'].with_suffix('.md')).open('w') as md_out:
                 md_out.write(template(f'templates/{item["type"]}.tpl', {'uuid': uuid, 'uuids': uuids}))
 
-    pass
-
+    # project
     # create_upcoming(things_db, todos)
     # create_today(areas, projects, things_db, todos)
     # create Anytime markdown
     # create Someday markdown
+
+    # TODO: sort in area, project, etc
 
 
 if __name__ == '__main__':
@@ -189,9 +144,6 @@ if __name__ == '__main__':
     # TODO: test / use creases https://github.com/liamcain/obsidian-creases
     # TODO: use breadcrumbs
     # TODO: modify things theme colineckert10@gmail.com
-
-    # Where are the collapsed/folded states of lists and headings stored? - Developers & API - Obsidian Forum
-    # https://forum.obsidian.md/t/where-are-the-collapsed-folded-states-of-lists-and-headings-stored/38614
 
     # TODO check on my own db
     # for index, a in enumerate(lists):
