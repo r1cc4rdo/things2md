@@ -107,7 +107,7 @@ def convert(input_json, output_dir, all_todos=False):
         if task['type'] in ('project', 'area', 'inbox'):
             (output_dir / task['fullpath']).mkdir(parents=True, exist_ok=True)
 
-    for uuid, item in uuids.items():  # write out to-do, projects, areas markdown files
+    for uuid, item in uuids.items():  # write out to-do, projects, areas, inbox markdown files
         if item['type'] != 'heading':
             with (output_dir / item['fullpath'].with_suffix('.md')).open('w') as md_out:
                 md_out.write(template(f'templates/{item["type"]}.tpl', {'uuid': uuid, 'uuids': uuids}))
@@ -137,13 +137,10 @@ if __name__ == '__main__':
     convert(args.input, args.output, args.all)
     print('All done.')
 
-    # TODO: save obsiadian settings to repo (creases, breadcrumbs, things theme)
-    # TODO: normalize todos, add safe name, convert date, find all fields
+    # TODO: items to list of only UUIDs
     # TODO: ignore today upcoming etc, make your own from dates
     # TODO: add hierarchy for Breadcrumbs plugin: https://github.com/SkepticMystic/breadcrumbs
     # TODO: test / use creases https://github.com/liamcain/obsidian-creases
-    # TODO: use breadcrumbs
-    # TODO: modify things theme colineckert10@gmail.com
 
     # TODO check on my own db
     # for index, a in enumerate(lists):
