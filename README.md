@@ -19,9 +19,9 @@ but  otherwise free and freedom-respecting markdown editor/manager. This tool is
 * [SimpleTemplate engine](https://bottlepy.org/docs/dev/stpl.html#bottle.SimpleTemplate) documentation, from the [Bottle](https://bottlepy.org/) project.
 
 ### Links for Things
-* [things-cli](https://github.com/thingsapi/things-cli): Python 3 CLI to read Things app data.
-* [things.py](https://github.com/thingsapi/things.py/): Python 3 library to read data from Things app.
 * [Things](https://culturedcode.com/things/): award-winning personal task manager, from [Cultured Code](https://culturedcode.com/).
+* [Backup](https://culturedcode.com/things/support/articles/2803570/) / [export](https://culturedcode.com/things/support/articles/2982272/) / [restore](https://culturedcode.com/things/support/articles/2803595/) your Things database.
+* [things-cli](https://github.com/thingsapi/things-cli): Python 3 CLI to read Things app data.
 
 ### Links for Obsidian
 * [Obsidian](https://obsidian.md/): markdown-based knowledge-base manager.
