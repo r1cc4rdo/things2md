@@ -21,7 +21,7 @@ but  otherwise free and freedom-respecting markdown editor/manager. This tool is
 
 ### Links for Things
 * [Things](https://culturedcode.com/things/): award-winning personal task manager, from [Cultured Code](https://culturedcode.com/).
-* [Backup](https://culturedcode.com/things/support/articles/2803570/) / [export](https://culturedcode.com/things/support/articles/2982272/) / [restore](https://culturedcode.com/things/support/articles/2803595/) your [Things database](user_home/Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac/).
+* [Backup](https://culturedcode.com/things/support/articles/2803570/) / [export](https://culturedcode.com/things/support/articles/2982272/) / [restore](https://culturedcode.com/things/support/articles/2803595/) your Things database (found [here](file://~/Library/Group%20Containers/JLMPQHK86H.com.culturedcode.ThingsMac/)).
 * [things-cli](https://github.com/thingsapi/things-cli): Python 3 CLI to read Things app data.
 * [things3-export](https://github.com/bboc/things3-export): export your Things 3 database to TaskPaper.
 
