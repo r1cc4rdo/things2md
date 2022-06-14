@@ -10,9 +10,9 @@
 
 % for uuid in area_projects:
 % project = uuids[uuid]
-* [{project['title']}]({project['fullpath']})
-% end
-% end
+* [{{project['title']}}]({{project['fullpath']}})
+% end  # for uuid
+% end  # if area_projects
 % area_todos = [t['uuid'] for t in area['items'] if t['type'] == 'to-do']
 % if area_todos:
 
@@ -20,5 +20,5 @@
 % todo = uuids[uuid]
 - [{{' ' if todo['status'] == 'incomplete' else 'x'}}] {{todo['title']}}
     - ![Open ToDo...]({{todo['fullpath']}})
-% end
-% end
+% end  # for uuid
+% end  # if area_todos

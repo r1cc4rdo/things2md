@@ -17,6 +17,7 @@ but  otherwise free and freedom-respecting markdown editor/manager. This tool is
 
 ### Links for developers
 * [SimpleTemplate engine](https://bottlepy.org/docs/dev/stpl.html#bottle.SimpleTemplate) documentation, from the [Bottle](https://bottlepy.org/) project.
+* [SimpleTemplate colorization](images/colorize_tpl.md) for [PyCharm](https://www.jetbrains.com/pycharm/).
 
 ### Links for Things
 * [Things](https://culturedcode.com/things/): award-winning personal task manager, from [Cultured Code](https://culturedcode.com/).

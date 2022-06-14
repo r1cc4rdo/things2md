@@ -129,6 +129,7 @@ if __name__ == '__main__':
 
     import os
     os.system('rm -rf test')
+    os.system('rm -rf vault')
 
     parser = argparse.ArgumentParser(
         usage='python things2md -i things_dump.json -o vault_directory',
@@ -141,7 +142,11 @@ if __name__ == '__main__':
     convert(args.input, args.output, args.all)
     print('All done.')
 
-    # TODO: items to list of only UUIDs
+    # TODO: items to list of only UUIDs >> refactor templates
+    # TODO: rename uuid variable in templates
+    # TODO: add template for single item
+    # TODO: add tags to end
+
     # TODO: ignore today upcoming etc, make your own from dates
     # TODO: add hierarchy for Breadcrumbs plugin: https://github.com/SkepticMystic/breadcrumbs
     # TODO: test / use creases https://github.com/liamcain/obsidian-creases
