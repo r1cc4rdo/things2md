@@ -113,7 +113,7 @@ def convert(input_json, output_dir, all_todos=False):
     for uuid, item in uuids.items():  # write out to-do, projects, areas, inbox markdown files
         if (item['type'] != 'heading') and (uuid not in ('Logbook', 'No Area', 'Areas')):
             with (output_dir / item['fullpath'].with_suffix('.md')).open('w') as md_out:
-                md_out.write(template(f'templates/{item["type"]}.tpl', {'uuid': uuid, 'uuids': uuids}))
+                md_out.write(template(f'templates/{item["type"].lower()}.tpl', {'uuid': uuid, 'uuids': uuids}))
 
     # create_today(areas, projects, things_db, todos)
     # create_upcoming(things_db, todos)

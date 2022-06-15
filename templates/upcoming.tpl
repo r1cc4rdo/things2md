@@ -1,21 +1,26 @@
+% from datetime import datetime
+% prev_date = datetime.now()
+% prev_year, prev_month, prev_day = prev_date.year, prev_date.month, prev_date.day
+% upcoming_todos = [uuids[todo_uuid] for todo_uuid in uuids[uuid]['items']]
+% upcoming_todos = sorted(upcoming_todos, key=lambda todo: todo['today_index'])
 ---
 ---
 ## 📅 Upcoming
+% for todo in upcoming_todos:
+% todo_datetime = datetime.strptime(todo['start_date'], '%Y-%m-%d')
+% todo_year, todo_month, todo_day = todo_datetime.year, todo_datetime.month, todo_datetime.day
+% if prev_year != todo_year:  # year granularity?
 
-prev_date = datetime.now()
-prev_date = [prev_date.year, prev_date.month, prev_date.day]
-for todo in sorted(things_db['Upcoming'], key=lambda x: x['today_index']):
-    todo = [t for t in todos.values() if t['uuid'] == todo['uuid']][0]  # cannot trust items in things_db to have 'path' because it contains duplicates
+## {{todo_year}}
+% prev_month, prev_day = None, None  # suppress month and day titles from now on
+% elif prev_month and prev_month != todo_month:  # month granularity?
 
-    todo_dt = datetime.strptime(todo['start_date'], '%Y-%m-%d')
-    todo_date = [todo_dt.year, todo_dt.month, todo_dt.day]
-    if prev_date[0] != todo_date[0]:  # year changed
-        fout.write(f'\n# {todo_date[0]}\n')
-        prev_date[1:] = None, None
-    elif prev_date[1] and prev_date[1] != todo_date[1]:  # month changed
-        fout.write(f'\n# {todo_dt.strftime("%B")}\n')
-        prev_date[2] = None
-    elif prev_date[2] and prev_date[2] != todo_date[2]:  # day changed
-        fout.write(f'\n# {todo_date[2]} {todo_dt.strftime("%B")}\n')
-    fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
-    prev_date = [(p and t) for p, t in zip(prev_date, todo_date)]
+## {{todo_datetime.strftime("%B")}}
+% prev_day = None  # suppress day titles from now on
+% elif prev_day and prev_day != todo_day:  # day granularity?
+
+## {{todo_day}} {{todo_datetime.strftime("%B")}}
+% end  # if prev_year
+% include('templates/todoentry.tpl', todo=todo)
+% prev_year, prev_month, prev_day = prev_year and todo_year, prev_month and todo_month, prev_day and todo_day
+% end  # for todo_uuid

@@ -1,11 +1,12 @@
 % area = uuids[uuid]
+% area_projects = [content_uuid for content_uuid in area['items'] if uuids[content_uuid]['type'] == 'project']
+% area_todos = [content_uuid for content_uuid in area['items'] if uuids[content_uuid]['type'] == 'to-do']
 % include('templates/frontmatter.tpl', task=area)
 # TODO
 * projects: sorted(contents, key=lambda t: t['index']):
 * todos: sorted(contents, key=lambda t: t['today_index']):
 
 ## {{area['title']}}
-% area_projects = [content_uuid for content_uuid in area['items'] if uuids[content_uuid]['type'] == 'project']
 % if area_projects:
 
 % for project_uuid in area_projects:
@@ -13,7 +14,6 @@
 * [{{project['title']}}]({{project['fullpath']}})
 % end  # for project_uuid
 % end  # if area_projects
-% area_todos = [content_uuid for content_uuid in area['items'] if uuids[content_uuid]['type'] == 'to-do']
 % if area_todos:
 
 % for todo_uuid in area_todos:
