@@ -9,13 +9,14 @@
 ## {{area['title']}}
 % if area_projects:
 
-% for project_uuid in area_projects:
-* [{{uuids[project_uuid]['title']}}]({{uuids[project_uuid]['fullpath']}})
-% end  # for project_uuid
+    % for project_uuid in area_projects:
+        % include('templates/projentry.tpl', project=uuids[project_uuid])
+    % end  # for project_uuid
 % end  # if area_projects
+%
 % if area_todos:
 
-% for todo_uuid in area_todos:
-% include('templates/todoentry.tpl', todo=uuids[todo_uuid])
-% end  # for uuid
+    % for todo_uuid in area_todos:
+        % include('templates/todoentry.tpl', todo=uuids[todo_uuid])
+    % end  # for uuid
 % end  # if area_todos

@@ -2,6 +2,11 @@
 ---
 ## ⭐ Today
 
+% for x in range(5):
+    {{x}}
+% end
+
+```
 today_uuids = [todo['uuid'] for todo in things_db['Today']]
 today_todos = [todo for todo in todos.values() if todo['uuid'] in today_uuids]
 projects_paths = [todo['path'].parent for todo in today_todos]
@@ -21,3 +26,4 @@ for area in areas:
         fout.write(f'\n# {project["title"]}\n')
         for todo in [t for t in today_todos if t['path'].parent == project['path']]:
             fout.write(f'- [ ] [{todo["title"]}]({todo["path"]})\n')
+```

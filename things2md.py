@@ -110,7 +110,7 @@ def convert(input_json, output_dir, all_todos=False):
         if task['type'] in ('project', 'area', 'Inbox'):
             (output_dir / task['fullpath']).mkdir(parents=True, exist_ok=True)
 
-    no_export_list = ('No Area', 'Areas') + () if all_todos else ('Logbook', )
+    no_export_list = ('No Area', 'Areas') + (() if all_todos else ('Logbook', ))
     for uuid, item in uuids.items():  # export all items to markdown
         if (item['type'] != 'heading') and (uuid not in no_export_list):
             with (output_dir / item['fullpath'].with_suffix('.md')).open('w') as md_out:
