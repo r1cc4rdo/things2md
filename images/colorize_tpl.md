@@ -1,5 +1,6 @@
 ## Colorize SimpleTemplate code in PyCharm
-When a template become long enough, it can be hard on your eyes.
+When a template becomes too long, it can be hard to parse visually
+without indentation.
 
 The following configuration for PyCharm is no substitute for proper
 syntax highlighting, but nonetheless help in making sense of what is
