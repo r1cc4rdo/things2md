@@ -2,7 +2,6 @@
 ---
 ## Inbox
 
-% for todo in uuids[uuid]['items']:
-- [{{' ' if todo['status'] == 'incomplete' else 'x'}}] {{todo['title']}}
-    - ![Open ToDo...]({{todo['fullpath']}})
+% for todo_uuid in uuids[uuid]['items']:
+% include('templates/todoentry.tpl', todo=uuids[todo_uuid])
 % end

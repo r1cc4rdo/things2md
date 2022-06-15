@@ -1,15 +1,16 @@
 import json
 import argparse
 from pathlib import Path
-from collections import defaultdict, Counter
+from collections import Counter
 
 from bottle import template
 
 
 def load_db(db_path, all_todos=False):
     """
-    Returns a dictionary of items indexed by UUID, including to-dos, projects, areas, headings and a
-    dictionary of lists containing UUIDs for Inbox, Today, Upcoming, Anytime, Someday, No Area, Areas.
+    Returns a dictionary of items indexed by UUID, including to-dos, projects, areas, headings.
+    Minimal entries are added for Inbox, Today, Upcoming, Anytime, Someday, No Area, and Areas
+    lists, each under a not well-formed UUID equal to the list name.
 
     The purpose of this function is then to transform the .json output of things-cli into a more
     pythonic, less redundant data structure, and to assign filenames and paths to tasks and projects.
@@ -31,72 +32,70 @@ def load_db(db_path, all_todos=False):
     created, modified, deadline, start_date, stop_date: date strings like '2021-03-28 12:15:20' or None
     notes: string, to-do or project notes
     status: either 'incomplete', 'completed', 'canceled'
-    type: either 'project', 'area', 'to-do', 'heading'. This function adds a fifth type: 'inbox'
+    type: either 'project', 'area', 'to-do', 'heading'. More type are added for bookkeeping, see code.
     items, checklist: list of items for either a project or a to-do
     """
     with Path(db_path).open() as json_in:
         db = json.load(json_in)
+        db = [(x['title'], x['items']) for x in db]
 
     uuids = {}  # master dictionary of UUIDs, including to-dos, projects, areas, headings
-    lists = defaultdict(list)  # list of UUIDS for areas, projects, inbox, upcoming, etc.
-    for task_list in db:
-        title = task_list['title']
-        for task in task_list['items']:
-            if (not all_todos) and ('status' in task) and (task['status'] != 'incomplete'):
+    for title, items in db:
+        for item in items:
+            if (not all_todos) and ('status' in item) and (item['status'] != 'incomplete'):
                 continue  # filter everything but 'incomplete'
 
-            uuid = task['uuid']
-            lists[title].append(uuid)
+            uuid = item['uuid']
             if uuid in uuids:
-                assert task == uuids[uuid], 'sanity check failed: found discrepancy between duplicates'
+                assert item == uuids[uuid], 'sanity check failed: found discrepancy between duplicates'
             else:
-                uuids[uuid] = task
+                uuids[uuid] = item
 
-    for task_list in lists.values():
-        assert len(task_list) == len(set(task_list)), 'sanity check failed: found duplicates within task lists'
+    for item in uuids.values():  # transform recursive fat lists into dry lists of UUIDs
+        if 'items' in item:
+            item['items'] = [i['uuid'] for i in item['items']]
 
-    inbox_uuid = 'InboxInboxInboxInbox42'
-    assert inbox_uuid not in uuids, 'sanity check failed: the probability of this happening by chance is ~3.67 * 10^-40'
-    inbox_items = sorted([uuids[uuid] for uuid in lists['Inbox']], key=lambda t: t['index'])
-    inbox = {'uuid': inbox_uuid, 'type': 'inbox', 'title': 'Inbox', 'items': inbox_items}
-    uuids[inbox_uuid] = inbox  # add item to represent the inbox
+    for title, items in db:  # also record UUID lists in an entry (no clashes possible, since not well-formed UUIDs)
+        items_uuids = [item['uuid'] for item in items]
+        assert len(items_uuids) == len(set(items_uuids)), 'sanity check failed: found duplicates within task lists'
+        uuids[title] = {'uuid': title, 'type': title, 'title': title, 'items': items_uuids}
 
-    for task in uuids.values():  # add filename, collect parent
-        filename = str(task['title']).replace(':', '\uA789').replace('/', '\u2215')
-        task['filename'] = filename if task['type'] != 'heading' else ''
-        match task:
+    for item in uuids.values():  # add filename, collect parent
+        filename = str(item['title']).replace(':', '\uA789').replace('/', '\u2215')  # see function help
+        item['filename'] = filename if item['type'] != 'heading' else ''
+        match item:
             case {'heading': uuid} | {'project': uuid} | {'area': uuid}:
-                task['parent'] = uuid
-            case {'uuid': uuid} if uuid in lists['Inbox']:
-                task['parent'] = inbox['uuid']
+                item['parent'] = uuid
+            case {'uuid': uuid} if uuid in uuids['Inbox']['items']:
+                item['parent'] = 'Inbox'
             case _:
-                task['parent'] = None
+                item['parent'] = None
 
-    for task in uuids.values():  # build filepaths
-        if task['type'] == 'heading':
-            task['fullpath'] = None  # make sure we don't use this by mistake
+    for item in uuids.values():  # build filepaths
+        if item['type'] == 'heading':
+            item['fullpath'] = None  # make sure we don't use this by mistake
             continue
 
-        fullpath, current = Path(task['filename']), task
+        fullpath, current = Path(item['filename']), item
         while uuid := current['parent']:
             current = uuids[uuid]
             if current['type'] != 'heading':  # might still walk up to a heading
                 fullpath = current['filename'] / fullpath
-        task['fullpath'] = fullpath
+        item['fullpath'] = fullpath
 
     all_paths = [task['fullpath'] for task in uuids.values() if task['fullpath']]  # dedupe duplicate paths with UUID
     path_counts = Counter(all_paths)
     deduped = Counter(set(all_paths))
     duplicates = [p for p in path_counts - deduped]
     if duplicates:
-        for task in uuids.values():
-            if task['fullpath'] in duplicates:
-                task['fullpath'] = task['fullpath'].with_name(f'{task["fullpath"].name}-{task["uuid"]}')
+        for item in uuids.values():
+            if item['fullpath'] in duplicates:
+                item['fullpath'] = item['fullpath'].with_name(f'{item["fullpath"].name}-{item["uuid"]}')
 
-    for task in uuids.values():  # max path length is 255 chars on macOS Monterey, APFS
-        assert len(str(task['fullpath'])) < 256, f'sanity check fail: path too long\nPath: {str(task["fullpath"])}'
+    for item in uuids.values():  # max path length is 255 chars on macOS Monterey, APFS
+        assert len(str(item['fullpath'])) < 256, f'sanity check fail: path too long\nPath: {str(item["fullpath"])}'
 
-    return uuids, lists
+    return uuids
 
 
 def convert(input_json, output_dir, all_todos=False):
@@ -105,20 +104,19 @@ def convert(input_json, output_dir, all_todos=False):
     Templates are instances of the SimpleTemplate format, from the Bottle project. Syntax and docs can be
     found here: https://bottlepy.org/docs/dev/stpl.html#bottle.SimpleTemplate
     """
-    uuids, lists = load_db(input_json, all_todos)
+    uuids = load_db(input_json, all_todos)
 
     for task in uuids.values():  # create directories
-        if task['type'] in ('project', 'area', 'inbox'):
+        if task['type'] in ('project', 'area', 'Inbox'):
             (output_dir / task['fullpath']).mkdir(parents=True, exist_ok=True)
 
     for uuid, item in uuids.items():  # write out to-do, projects, areas, inbox markdown files
-        if item['type'] != 'heading':
+        if (item['type'] != 'heading') and (uuid not in ('Logbook', 'No Area', 'Areas')):
             with (output_dir / item['fullpath'].with_suffix('.md')).open('w') as md_out:
                 md_out.write(template(f'templates/{item["type"]}.tpl', {'uuid': uuid, 'uuids': uuids}))
 
-    # project
-    # create_upcoming(things_db, todos)
     # create_today(areas, projects, things_db, todos)
+    # create_upcoming(things_db, todos)
     # create Anytime markdown
     # create Someday markdown
 
@@ -192,3 +190,5 @@ if __name__ == '__main__':
     # show frontmatter?
     # breadcrumbs
     # creases
+
+    # see https://emojipedia.org/
