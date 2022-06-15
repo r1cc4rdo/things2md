@@ -1,13 +1,14 @@
+% todo = uuids[uuid]
 % include('templates/frontmatter.tpl', task=uuids[uuid])
-## {{uuids[uuid]['title']}}
-% if 'notes' in uuids[uuid] and uuids[uuid]['notes']:
+## {{todo['title']}}
+% if 'notes' in todo and todo['notes']:
 
-{{uuids[uuid]['notes']}}
+{{todo['notes']}}
 % end
-% if 'checklist' in uuids[uuid] and uuids[uuid]['checklist']:
+% if 'checklist' in todo and todo['checklist']:
 
 ### Checklist
-% for item in uuids[uuid]['checklist']:
+% for item in todo['checklist']:
 - [{{' ' if item['status'] == 'incomplete' else 'x'}}] {{item['title']}}
 % end
 % end

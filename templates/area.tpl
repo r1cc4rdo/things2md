@@ -10,8 +10,7 @@
 % if area_projects:
 
 % for project_uuid in area_projects:
-% project = uuids[project_uuid]
-* [{{project['title']}}]({{project['fullpath']}})
+* [{{uuids[project_uuid]['title']}}]({{uuids[project_uuid]['fullpath']}})
 % end  # for project_uuid
 % end  # if area_projects
 % if area_todos:
