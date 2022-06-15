@@ -4,4 +4,7 @@
 {{key}}: {{task[key]}}
 % end
 % end
+% if 'parent' in task and task['parent']:
+parent: {{task['fullpath'].parent.with_suffix('.md').name}}
+% end
 ---

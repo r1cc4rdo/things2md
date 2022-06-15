@@ -154,6 +154,9 @@ if __name__ == '__main__':
     # TODO: contact things-cli
     # TODO: contact things skin
 
+    # TODO: delete empty frontmatter
+    # TODO: add breadcrumbs with .csv
+
     # TODO check on my own db
     # for index, a in enumerate(lists):
     #     for b in list(lists)[index + 1:]:
@@ -181,3 +184,11 @@ if __name__ == '__main__':
     #         if field_name in task:
     #             values.append(task[field_name])
     #     print(index, field_name, set(values))
+
+    # Obsidian cfg
+    #
+    # default: reading view
+    # theme: light, things
+    # show frontmatter?
+    # breadcrumbs
+    # creases

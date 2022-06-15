@@ -1,10 +1,10 @@
+% include('templates/frontmatter.tpl', task=uuids[uuid])
 # TODO: sort
 ```
 contents = sorted(contents, key=lambda t: t['today_index'])
 sorted(heading_contents, key=lambda t: t['index']):
 ```
 
-% include('templates/frontmatter.tpl', task=uuids[uuid])
 ## {{uuids[uuid]['title']}}
 % notes = uuids[uuid]['notes'].strip()
 % if notes:

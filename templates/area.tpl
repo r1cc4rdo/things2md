@@ -1,9 +1,9 @@
+% area = uuids[uuid]
+% include('templates/frontmatter.tpl', task=area)
 # TODO
 * projects: sorted(contents, key=lambda t: t['index']):
 * todos: sorted(contents, key=lambda t: t['today_index']):
 
-% area = uuids[uuid]
-% include('templates/frontmatter.tpl', task=area)
 ## {{area['title']}}
 % area_projects = [p['uuid'] for p in area['items'] if p['type'] == 'project']
 % if area_projects:
